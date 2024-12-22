@@ -1,0 +1,14 @@
+{
+  "name": "node-first",
+  "version": "1.0.0",
+  "description": "servidor do node e sistema de rota base utilizando express",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Pelifefe",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
