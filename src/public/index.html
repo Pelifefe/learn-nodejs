@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Sistema de Usuários</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      min-width: 160px;
+      z-index: 50;
+    }
+    
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+  </style>
+</head>
+<body class="bg-gray-100">
+  <!-- Navbar -->
+  <nav class="bg-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <span class="text-xl font-bold text-blue-600">Dashboard</span>
+        </div>
+
+        <div class="flex items-center">
+          <div class="dropdown relative">
+            <button class="flex items-center space-x-2 text-gray-700 hover:text-gray-900 px-4 py-2 rounded-md">
+              <span id="userEmail"></span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+              </svg>
+            </button>
+            
+            <div class="dropdown-content bg-white rounded-md shadow-xl mt-2">
+              <a href="profile.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                Editar Perfil
+              </a>
+              <button id="logoutBtn" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                Sair
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Dashboard Content -->
+  <div class="container mx-auto px-4 py-8">
+    <div class="max-w-3xl mx-auto">
+      <h1 class="text-2xl font-bold text-center mb-8">Painel de Controle</h1>
+      
+      <div id="dashboardButtons" class="grid gap-4 justify-center">
+        <!-- Buttons will be added here dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function loadDashboard() {
+      try {
+        const response = await fetch('/users/profile');
+        if (!response.ok) {
+          window.location.href = '/login';
+          return;
+        }
+        
+        const user = await response.json();
+        document.getElementById('userEmail').textContent = user.email;
+        
+        const buttonsContainer = document.getElementById('dashboardButtons');
+        
+        // Botão Lista Produtos (disponível para todos)
+        const productButton = createButton('Lista Produtos', () => {
+          window.location.href = '/produtos';
+          console.log('Acessar lista de produtos');
+        });
+        buttonsContainer.appendChild(productButton);
+        
+        // Botão Gerenciar Usuários (apenas para admin)
+        if (user.role === 'admin') {
+          const usersButton = createButton('Gerenciar Usuários', () => {
+            window.location.href = '/users';
+          });
+          buttonsContainer.appendChild(usersButton);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        window.location.href = '/login';
+      }
+    }
+
+    function createButton(text, onClick) {
+      const button = document.createElement('button');
+      button.className = 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-lg text-lg w-full max-w-xs mx-auto transition duration-300 ease-in-out transform hover:scale-105';
+      button.textContent = text;
+      button.onclick = onClick;
+      return button;
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      try {
+        await fetch('/auth/logout', { method: 'POST' });
+        window.location.href = '/login';
+      } catch (error) {
+        console.error('Error logging out:', error);
+      }
+    });
+
+    // Load dashboard on page load
+    loadDashboard();
+  </script>
+</body>
+</html>

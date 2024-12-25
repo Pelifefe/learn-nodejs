@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Produtos</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-2xl font-bold">Lista de Produtos</h1>
+                <a href="/" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Voltar
+                </a>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="min-w-full table-auto">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="px-4 py-2 text-left">Nome</th>
+                            <th class="px-4 py-2 text-left">Email</th>
+                            <th class="px-4 py-2 text-left">CPF</th>
+                            <th class="px-4 py-2 text-left">Data nascimento</th>
+                            <th class="px-4 py-2 text-left">Grupo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersList">
+                        <!-- Produtos serão inseridos aqui via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadUsers() {
+            try {
+                const response = await fetch('/admin-users');
+                const users = await response.json();
+                
+                const usersList = document.getElementById('usersList');
+                usersList.innerHTML = users.map(user => `
+                    <tr class="border-b">
+                        <td class="px-4 py-2">${user.name}</td>
+                        <td class="px-4 py-2">R$ ${user.email}</td>
+                        <td class="px-4 py-2">${user.cpf}</td>
+                        <td class="px-4 py-2">${user.birth_date}</td>
+                        <td class="px-4 py-2">${user.role}</td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Erro ao carregar usuários:', error);
+            }
+        }
+
+        // Carrega os produtos quando a página é aberta
+        loadUsers();
+    </script>
+</body>
+</html>
