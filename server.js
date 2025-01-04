@@ -130,6 +130,9 @@ app.get('/login', (req, res) => {
   res.sendFile(join(__dirname, 'src/public', 'login.html'));
 });
 
+app.get('/profile', authMiddleware, (req, res) => {
+  res.sendFile(join(__dirname, 'src/public', 'profile.html'));
+});
 
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`);

@@ -36,10 +36,13 @@
                  type="date" id="birth_date" name="birth_date" required>
         </div>
         
-        <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2" for="role">Grupo</label>
-          <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 bg-gray-100"
-                 type="text" id="role" name="role" readonly>
+        <div class="mb-6">
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="role">Função</label>
+          <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="role" name="role" required>
+            <option value="default">Default</option>
+            <option value="admin">Admin</option>
+            <option value="crm">CRM</option>
+          </select>
         </div>
         
         <div class="flex items-center justify-between">
@@ -69,6 +72,9 @@
         document.getElementById('cpf').value = user.cpf;
         document.getElementById('email').value = user.email;
         document.getElementById('birth_date').value = user.birth_date;
+        if (user.role !== 'admin') {
+          document.getElementById('role').parentElement.style.display = 'none';
+        }
         document.getElementById('role').value = user.role;
       } catch (error) {
         console.error('Error:', error);
