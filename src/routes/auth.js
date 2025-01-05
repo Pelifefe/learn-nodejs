@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post('/register', async (req, res) => {
   const { email, password, name, cpf, birth_date, role = 'default' } = req.body;
-  const connection = await pool.getConnection();  // Obtém uma conexão do pool
+  const connection = await pool.getConnection();
   
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -16,6 +16,24 @@ router.post('/register', async (req, res) => {
       INSERT INTO users (name, email, password, cpf, birth_date, role)
       VALUES (?, ?, ?, ?, ?, ?)
     `, [name, email, hashedPassword, cpf, birth_date, role]);
+
+    res.json({ message: 'Registration successful' });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  } finally {
+    connection.release();  // Libera a conexão de volta ao pool
+  }
+});
+
+router.post('/register-client', async (req, res) => {
+  const {name, birth_date, cpf, email, telephone} = req.body;
+  const connection = await pool.getConnection(); 
+  
+  try {
+    await connection.query(`
+      INSERT INTO clients (name, birth_date, cpf, email, telephone)
+      VALUES (?, ?, ?, ?, ?)
+    `, [name, birth_date, cpf, email, telephone]);
 
     res.json({ message: 'Registration successful' });
   } catch (error) {
@@ -44,13 +62,18 @@ router.post('/login', async (req, res) => {
       role: user.role
     };
 
-    res.json({ message: 'Login successful' });
+    // Inclui o papel do usuário na resposta
+    res.json({ 
+      message: 'Login successful', 
+      role: user.role 
+    });
   } catch (error) {
     res.status(401).json({ error: error.message });
   } finally {
     connection.release();  // Libera a conexão de volta ao pool
   }
 });
+
 
 router.post('/logout', (req, res) => {
   req.session.destroy();  // Destrói a sessão

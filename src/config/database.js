@@ -35,10 +35,27 @@ async function createTables() {
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       )
     `);
+    // Criação da tabela 'clients'
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS clients (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        birth_date DATE NOT NULL,
+        status VARCHAR(255) NOT NULL DEFAULT 'em negociação',
+        cpf VARCHAR(11) UNIQUE NOT NULL,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        telephone VARCHAR(11) NOT NULL DEFAULT '00000000000',
+        obs VARCHAR(3000) DEFAULT '',
+        fidelity INT NOT NULL DEFAULT 1 CHECK (fidelity >= 1 AND fidelity <= 5),
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      )
+    `);
   } finally {
     connection.release();
   }
 }
+
 
 // Função para garantir que o usuário admin exista
 async function createAdminUser() {
@@ -62,10 +79,31 @@ async function createAdminUser() {
   }
 }
 
-// Execução das funções de criação de tabelas e admin
+// Função para garantir que o cliente de teste exista
+async function createTestClient() {
+  const connection = await pool.getConnection();
+
+  try {
+    // Verifica se o cliente de teste já existe
+    const [rows] = await connection.query('SELECT * FROM clients WHERE email = ?', ['testclient@test.com']);
+    
+    if (rows.length === 0) {
+      // Criação do cliente de teste
+      await connection.query(`
+        INSERT INTO clients (name, birth_date, status, cpf, email, telephone, obs, fidelity)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `, ['Test Client', '1990-01-01', 'em negociação', '11111111111', 'testclient@test.com', '1234567890', 'Test client for listing purposes', 3]);
+    }
+  } finally {
+    connection.release();
+  }
+}
+
+// Execução das funções de criação de tabelas, admin e cliente de teste
 async function initializeDatabase() {
   await createTables();
   await createAdminUser();
+  await createTestClient();
 }
 
 initializeDatabase().catch(console.error);

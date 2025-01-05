@@ -25,7 +25,7 @@
     <div class="max-w-7xl mx-auto px-4">
       <div class="flex justify-between h-16">
         <div class="flex items-center">
-          <span class="text-xl font-bold text-blue-600">Dashboard</span>
+          <span class="text-xl font-bold text-blue-600">Home</span>
         </div>
 
         <div class="flex items-center">
@@ -75,20 +75,23 @@
         document.getElementById('userEmail').textContent = user.email;
         
         const buttonsContainer = document.getElementById('dashboardButtons');
-        
-        // Botão Lista Produtos (disponível para todos)
-        const productButton = createButton('Lista Produtos', () => {
+      
+        if (user.role === 'admin') {
+          const productButton = createButton('Lista Produtos', () => {
           window.location.href = '/produtos';
           console.log('Acessar lista de produtos');
-        });
-        buttonsContainer.appendChild(productButton);
-        
-        // Botão Gerenciar Usuários (apenas para admin)
-        if (user.role === 'admin') {
+          });
+          buttonsContainer.appendChild(productButton);
+          
           const usersButton = createButton('Gerenciar Usuários', () => {
-            window.location.href = '/users';
+              window.location.href = '/users';
           });
           buttonsContainer.appendChild(usersButton);
+
+        }else if(user.role === 'crm'){
+          window.location.href = '/dashboard';
+        }else{
+          window.location.href = '/login';
         }
       } catch (error) {
         console.error('Error:', error);

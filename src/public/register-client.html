@@ -3,15 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - Sistema de Usuários</title>
+  <title>Cadastro de Clientes</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100">
   <div class="container mx-auto px-4 py-8">
     <div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
-      <h2 class="text-2xl font-bold mb-6 text-center">Login</h2>
+      <h2 class="text-2xl font-bold mb-6 text-center">Cadastro</h2>
 
-      <form id="loginForm" action="/auth/login" method="POST">
+      <form id="registerForm" action="/auth/register-client" method="POST">
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="name">Nome</label>
+          <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                 type="text" id="name" name="name" required>
+        </div>
+        
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="cpf">CPF</label>
+          <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                 type="text" id="cpf" name="cpf" required>
+        </div>
+        
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="email">Email</label>
           <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -19,15 +31,24 @@
         </div>
         
         <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2" for="password">Senha</label>
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="telephone">Telefone</label>
           <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                 type="password" id="password" name="password" required>
+             type="text" id="telephone" name="telephone" required pattern="\(\d{2}\) \d{5}-\d{4}" placeholder="(00) 00000-0000">
+        </div>
+        
+        <div class="mb-6">
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="birth_date">Data de Nascimento</label>
+          <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                 type="date" id="birth_date" name="birth_date" required>
         </div>
         
         <div class="flex items-center justify-between">
           <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
-            Entrar
+            Cadastrar
           </button>
+          <a href="/dashboard" class="text-blue-500 font-bold hover:text-blue-800">
+            Voltar
+          </a>
         </div>
       </form>
 
@@ -36,14 +57,14 @@
   </div>
 
   <script>
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       
       const formData = new FormData(e.target);
       const data = Object.fromEntries(formData.entries());
       
       try {
-        const response = await fetch('/auth/login', {
+        const response = await fetch('/auth/register-client', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -54,23 +75,13 @@
         const result = await response.json();
         
         if (!response.ok) throw new Error(result.error);
+        
         document.getElementById('message').className = 'text-green-500';
-        document.getElementById('message').textContent = 'Login realizado com sucesso!';
-      
-        if (result.role) {
-          const userRole = result.role.toLowerCase();
-
-          if (userRole === 'admin') {
-            window.location.href = '/';
-          } else if (userRole === 'crm') {
-            window.location.href = '/dashboard';
-          } else {
-            throw new Error('Role de usuário desconhecida.');
-          }
-        } else {
-          throw new Error('Dados de usuário inválidos. Verifique o retorno da API.');
-        }
-
+        document.getElementById('message').textContent = 'Cadastro realizado com sucesso!';
+        
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 2000);
       } catch (error) {
         document.getElementById('message').className = 'text-red-500';
         document.getElementById('message').textContent = error.message;

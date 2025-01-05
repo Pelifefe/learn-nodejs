@@ -59,7 +59,7 @@ app.use('/users', authMiddleware, userRoutes);
 
 app.get('/', (req, res) => {
   res.sendFile(join(__dirname, 'src/public', 'index.html'));
-});
+}); 
 
 // Produtos
 app.get('/register-products', (req, res) => {
@@ -121,17 +121,40 @@ app.get('/admin-users', async (req, res) => {
   }
 });
 
+app.get('/profile', authMiddleware, (req, res) => {
+  res.sendFile(join(__dirname, 'src/public', 'profile.html'));
+});
+
+
+//Clients
+
+app.get('/dashboard', (req, res) => {
+  res.sendFile(join(__dirname, 'src/public', 'dashboard.html'));
+});
+
+app.get('/clients', async (req, res) => {
+
+  try {
+    const [rows] = await pool.execute('SELECT * FROM clients ORDER BY created_at DESC');
+    console.log(`${rows.length} clientes encontrados`);
+    res.json(rows);
+  } catch (error) {
+    console.error('Erro ao listar clientes:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Rotas de autenticação
 app.get('/register', (req, res) => {
   res.sendFile(join(__dirname, 'src/public', 'register.html'));
 });
 
-app.get('/login', (req, res) => {
-  res.sendFile(join(__dirname, 'src/public', 'login.html'));
+app.get('/register-client', (req, res) => {
+  res.sendFile(join(__dirname, 'src/public', 'register-client.html'));
 });
 
-app.get('/profile', authMiddleware, (req, res) => {
-  res.sendFile(join(__dirname, 'src/public', 'profile.html'));
+app.get('/login', (req, res) => {
+  res.sendFile(join(__dirname, 'src/public', 'login.html'));
 });
 
 app.listen(port, () => {

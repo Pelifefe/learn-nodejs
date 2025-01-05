@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .dropdown-content {
+          display: none;
+          position: absolute;
+          right: 0;
+          min-width: 160px;
+          z-index: 50;
+        }
+        
+        .dropdown:hover .dropdown-content {
+          display: block;
+        }
+      </style>
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4">
+          <div class="flex justify-between h-16">
+            <div class="flex items-center">
+              <span class="text-xl font-bold text-blue-600">Dashboard</span>
+            </div>
+    
+            <div class="flex items-center">
+              <div class="dropdown relative">
+                <button class="flex items-center space-x-2 text-gray-700 hover:text-gray-900 px-4 py-2 rounded-md">
+                  <span id="userEmail"></span>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+                
+                <div class="dropdown-content bg-white rounded-md shadow-xl mt-2">
+                  <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    Editar Perfil
+                  </a>
+                  <button id="logoutBtn" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    Sair
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+    <div class="container mx-auto px-4 py-8">
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex justify-between items-center mb-6">
+                <div class="mb-4">
+                    <input type="text" id="searchInput" class="w-full px-4 py-2 border rounded-md" placeholder="Pesquisar clientes...">
+                </div>
+                <a href="/register-client" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Add Clientes</a>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="min-w-full table-auto">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="px-4 py-2 text-left">Nome</th>
+                            <th class="px-4 py-2 text-left">Status</th>
+                            <th class="px-4 py-2 text-left">Email</th>
+                            <th class="px-4 py-2 text-left">Telefone</th>
+                    </thead>
+                    <tbody id="clientsList">
+                        <!-- Produtos serão inseridos aqui via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadClients() {
+            try {
+                const response = await fetch('/clients');
+                const clients = await response.json();
+                
+                const clientsList = document.getElementById('clientsList');
+                clientsList.innerHTML = clients.map(client => `
+                    <tr class="border-b">
+                        <td class="px-4 py-2">${client.name}</td>
+                        <td class="px-4 py-2">${client.status}</td>
+                        <td class="px-4 py-2">${client.email}</td>
+                        <td class="px-4 py-2">${client.telephone}</td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Erro ao carregar clientes:', error);
+            }
+        }
+
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            try {
+                await fetch('/auth/logout', { method: 'POST' });
+                window.location.href = '/login';
+            } catch (error) {
+                console.error('Error logging out:', error);
+            }
+        });
+
+        loadClients();
+    </script>
+</body>
+</html>
