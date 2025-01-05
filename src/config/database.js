@@ -92,7 +92,7 @@ async function createTestClient() {
       await connection.query(`
         INSERT INTO clients (name, birth_date, status, cpf, email, telephone, obs, fidelity)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-      `, ['Test Client', '1990-01-01', 'em negociação', '11111111111', 'testclient@test.com', '1234567890', 'Test client for listing purposes', 3]);
+      `, ['Test Client', '1990-01-01', 'em negociação', '11111111111', 'testclient@test.com', '12345678910', 'Test client for listing purposes', 3]);
     }
   } finally {
     connection.release();
