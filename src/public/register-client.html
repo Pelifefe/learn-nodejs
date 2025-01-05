@@ -60,6 +60,17 @@
     document.getElementById('registerForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       
+      const telephoneInput = document.getElementById('telephone');
+      const cleanedTelephone = telephoneInput.value.replace(/\D/g, '');
+      
+      if (cleanedTelephone.length < 11) {
+        document.getElementById('message').className = 'text-red-500';
+        document.getElementById('message').textContent = 'Telefone deve ter no mínimo 11 números.';
+        return;
+      }
+      
+      telephoneInput.value = cleanedTelephone;
+      
       const formData = new FormData(e.target);
       const data = Object.fromEntries(formData.entries());
       
@@ -80,7 +91,7 @@
         document.getElementById('message').textContent = 'Cadastro realizado com sucesso!';
         
         setTimeout(() => {
-          window.location.href = '/login';
+          window.location.href = '/clients';
         }, 2000);
       } catch (error) {
         document.getElementById('message').className = 'text-red-500';

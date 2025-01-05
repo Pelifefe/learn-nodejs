@@ -1,111 +1,220 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
     <style>
-        .dropdown-content {
-          display: none;
-          position: absolute;
-          right: 0;
-          min-width: 160px;
-          z-index: 50;
-        }
-        
-        .dropdown:hover .dropdown-content {
-          display: block;
-        }
-      </style>
-</head>
-<body class="bg-gray-100">
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        right: 0;
+        min-width: 160px;
+        z-index: 50;
+      }
+
+      .dropdown:hover .dropdown-content {
+        display: block;
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+      }
+      .modal-content {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        max-width: 500px;
+        width: 90%;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100">
     <nav class="bg-white shadow-md">
-        <div class="max-w-7xl mx-auto px-4">
-          <div class="flex justify-between h-16">
-            <div class="flex items-center">
-              <span class="text-xl font-bold text-blue-600">Dashboard</span>
-            </div>
-    
-            <div class="flex items-center">
-              <div class="dropdown relative">
-                <button class="flex items-center space-x-2 text-gray-700 hover:text-gray-900 px-4 py-2 rounded-md">
-                  <span id="userEmail"></span>
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
-                  </svg>
+      <div class="max-w-7xl mx-auto px-4">
+        <div class="flex justify-between h-16">
+          <div class="flex items-center">
+            <span class="text-xl font-bold text-blue-600">Dashboard</span>
+          </div>
+
+          <div class="flex items-center">
+            <div class="dropdown relative">
+              <button
+                class="flex items-center space-x-2 text-gray-700 hover:text-gray-900 px-4 py-2 rounded-md"
+              >
+                <span id="userEmail"></span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </button>
+
+              <div class="dropdown-content bg-white rounded-md shadow-xl mt-2">
+                <a
+                  href="/profile"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Editar Perfil
+                </a>
+                <button
+                  id="logoutBtn"
+                  class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Sair
                 </button>
-                
-                <div class="dropdown-content bg-white rounded-md shadow-xl mt-2">
-                  <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                    Editar Perfil
-                  </a>
-                  <button id="logoutBtn" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                    Sair
-                  </button>
-                </div>
               </div>
             </div>
           </div>
         </div>
-      </nav>
+      </div>
+    </nav>
     <div class="container mx-auto px-4 py-8">
-        <div class="bg-white rounded-lg shadow-md p-6">
-            <div class="flex justify-between items-center mb-6">
-                <div class="mb-4">
-                    <input type="text" id="searchInput" class="w-full px-4 py-2 border rounded-md" placeholder="Pesquisar clientes...">
-                </div>
-                <a href="/register-client" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                    Add Clientes</a>
-            </div>
-            
-            <div class="overflow-x-auto">
-                <table class="min-w-full table-auto">
-                    <thead>
-                        <tr class="bg-gray-200">
-                            <th class="px-4 py-2 text-left">Nome</th>
-                            <th class="px-4 py-2 text-left">Status</th>
-                            <th class="px-4 py-2 text-left">Email</th>
-                            <th class="px-4 py-2 text-left">Telefone</th>
-                    </thead>
-                    <tbody id="clientsList">
-                        <!-- Produtos serão inseridos aqui via JavaScript -->
-                    </tbody>
-                </table>
-            </div>
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex justify-between items-center mb-6">
+          <div class="mb-4">
+            <input
+              type="text"
+              id="searchInput"
+              class="w-full px-4 py-2 border rounded-md"
+              placeholder="Pesquisar clientes..."
+            />
+          </div>
+          <a
+            href="/register-client"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Add Clientes</a
+          >
         </div>
+
+        <div class="overflow-x-auto">
+          <table class="min-w-full table-auto">
+            <thead>
+              <tr class="bg-gray-200">
+                <th class="px-4 py-2 text-left">Nome</th>
+                <th class="px-4 py-2 text-left">Status</th>
+                <th class="px-4 py-2 text-left">Email</th>
+                <th class="px-4 py-2 text-left">Telefone</th>
+                <th class="px-4 py-2 text-left">Detalhes</th>
+              </tr>
+            </thead>
+            <tbody id="clientsList">
+              <!-- Produtos serão inseridos aqui via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div
+      id="modal"
+      class="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden"
+    >
+      <div class="bg-white rounded-lg shadow-lg p-6 w-1/2">
+        <h2 id="modalTitle" class="text-xl font-bold mb-4"></h2>
+        <p id="modalContent"></p>
+        <button
+          id="closeModal"
+          class="mt-4 bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"
+        >
+          Fechar
+        </button>
+      </div>
     </div>
 
     <script>
-        async function loadClients() {
-            try {
-                const response = await fetch('/clients');
-                const clients = await response.json();
-                
-                const clientsList = document.getElementById('clientsList');
-                clientsList.innerHTML = clients.map(client => `
-                    <tr class="border-b">
-                        <td class="px-4 py-2">${client.name}</td>
-                        <td class="px-4 py-2">${client.status}</td>
-                        <td class="px-4 py-2">${client.email}</td>
-                        <td class="px-4 py-2">${client.telephone}</td>
-                    </tr>
-                `).join('');
-            } catch (error) {
-                console.error('Erro ao carregar clientes:', error);
-            }
-        }
+      let clients = [];
+      async function loadClients() {
+        try {
+          const response = await fetch("/clients");
+          const clients = await response.json();
 
-        document.getElementById('logoutBtn').addEventListener('click', async () => {
-            try {
-                await fetch('/auth/logout', { method: 'POST' });
-                window.location.href = '/login';
-            } catch (error) {
-                console.error('Error logging out:', error);
-            }
+          const clientsList = document.getElementById("clientsList");
+          clientsList.innerHTML = clients
+            .map(
+              (client, index) => `
+          <tr class="border-b">
+              <td class="px-4 py-2">${client.name}</td>
+              <td class="px-4 py-2">${client.status}</td>
+              <td class="px-4 py-2">${client.email}</td>
+              <td class="px-4 py-2">${client.telephone}</td>
+              <td class="px-4 py-2">
+                <button class="modalBtn" data-index="${index}" title="Visualizar">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500 hover:text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                </button>
+              </td>
+          </tr>
+          `
+            )
+            .join("");
+          // Adicionar eventos de clique aos botões do modal
+          document
+            .getElementById("clientsList")
+            .addEventListener("click", (event) => {
+              const button = event.target.closest(".modalBtn"); // Verifica se o botão foi clicado
+              if (button) {
+                const index = button.getAttribute("data-index");
+                openModal(clients[index]); // Passa o cliente correspondente
+              }
+            });
+        } catch (error) {
+          console.error("Erro ao carregar clientes:", error);
+        }
+      }
+
+      function openModal(client) {
+        // Preencher modal com os dados do cliente
+        document.getElementById(
+          "modalTitle"
+        ).innerText = `Detalhes de ${client.name}`;
+        document.getElementById("modalContent").innerText = `
+      Nome: ${client.name}
+      Status: ${client.status}
+      Email: ${client.email}
+      Telefone: ${client.telephone}
+  `;
+        // Exibir modal
+        document.getElementById("modal").classList.remove("hidden");
+      }
+
+      document.getElementById("closeModal").addEventListener("click", () => {
+        document.getElementById("modal").classList.add("hidden");
+      });
+
+      document
+        .getElementById("logoutBtn")
+        .addEventListener("click", async () => {
+          try {
+            await fetch("/auth/logout", { method: "POST" });
+            window.location.href = "/login";
+          } catch (error) {
+            console.error("Error logging out:", error);
+          }
         });
 
-        loadClients();
+      loadClients();
     </script>
-</body>
+  </body>
 </html>
