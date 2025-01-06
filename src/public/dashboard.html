@@ -277,9 +277,6 @@
       let clients = [];
       async function loadClients() {
         try {
-          const response = await fetch("/clients");
-          clients = await response.json();
-
           const responseUser = await fetch("/users/profile");
           if (!responseUser.ok) {
             window.location.href = "/login";
@@ -288,9 +285,13 @@
           const user = await responseUser.json();
           document.getElementById("userEmail").textContent = user.email;
 
+          const response = await fetch("/clients");
+          clients = await response.json();
+
           renderClientList(clients);
         } catch (error) {
-          console.error("Erro ao carregar clientes:", error);
+          console.error("Error:", error);
+          window.location.href = "/login";
         }
       }
       // Função para renderizar a lista de clientes
@@ -437,6 +438,18 @@
         const modal = document.getElementById("modal");
         modal.classList.add("hidden");
       }
+
+      document
+        .getElementById("logoutBtn")
+        .addEventListener("click", async () => {
+          try {
+            await fetch("/auth/logout", { method: "POST" });
+            window.location.href = "/login";
+          } catch (error) {
+            console.error("Error logging out:", error);
+          }
+        });
+
       loadClients();
     </script>
   </body>
