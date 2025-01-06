@@ -180,21 +180,45 @@
     </nav>
     <div class="container mx-auto px-4 py-8">
       <div class="bg-white rounded-lg shadow-md p-6">
-        <div class="flex justify-between items-center mb-6">
-          <div class="mb-4">
+        <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
+          <!-- Contêiner para os campos de pesquisa -->
+          <div class="flex flex-wrap gap-2">
             <input
               type="text"
               id="searchInput"
-              class="w-full px-4 py-2 border rounded-md"
-              placeholder="Pesquisar clientes..."
+              class="min-w-[150px] px-2 py-1 text-sm border rounded-md"
+              placeholder="Pesquisar por nome..."
+            />
+            <select
+              id="statusFilter"
+              class="min-w-[150px] px-2 py-1 text-sm border rounded-md"
+            >
+              <option value="">Todos os Status</option>
+              <option value="em negociação">Em negociação</option>
+              <option value="contrato fechado">Contrato fechado</option>
+              <option value="inadimplente">Inadimplente</option>
+            </select>
+            <input
+              type="text"
+              id="emailFilter"
+              class="min-w-[150px] px-2 py-1 text-sm border rounded-md"
+              placeholder="Pesquisar por e-mail..."
+            />
+            <input
+              type="text"
+              id="phoneFilter"
+              class="min-w-[150px] px-2 py-1 text-sm border rounded-md"
+              placeholder="Pesquisar por telefone..."
             />
           </div>
+
+          <!-- Botão Add Clientes -->
           <a
             href="/register-client"
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 text-sm rounded"
           >
-            Add Clientes</a
-          >
+            Add Clientes
+          </a>
         </div>
 
         <div class="overflow-x-auto">
@@ -256,6 +280,14 @@
           const response = await fetch("/clients");
           clients = await response.json();
 
+          const responseUser = await fetch("/users/profile");
+          if (!responseUser.ok) {
+            window.location.href = "/login";
+            return;
+          }
+          const user = await responseUser.json();
+          document.getElementById("userEmail").textContent = user.email;
+
           renderClientList(clients);
         } catch (error) {
           console.error("Erro ao carregar clientes:", error);
@@ -273,7 +305,7 @@
             <td class="px-4 py-2">${client.email}</td>
             <td class="px-4 py-2">${client.telephone.replace(
               /(\d{2})(\d{5})(\d{4})/,
-              "($1) $2-$3"    
+              "($1) $2-$3"
             )}</td>
             <td class="px-4 py-2">
               <button class="modalBtn" data-index="${index}" title="Visualizar">
@@ -283,12 +315,14 @@
                 </svg>
               </button>
             <td class="px-4 py-2">
-              <a href="/edit-client/${client.id}" class="editBtn" title="Editar">
+              <a href="/edit-client/${
+                client.id
+              }" class="editBtn" title="Editar">
                 <i class="fas fa-pencil-alt text-orange-500 hover:text-orange-700 h-6 w-6"></i>
               </a>
             </td>
           `
-        )
+          )
           .join("");
         // Adicionar eventos de clique aos botões do modal
         document
@@ -310,6 +344,41 @@
         return clients.filter((client) =>
           client.name.toLowerCase().includes(query.toLowerCase())
         );
+      }
+
+      document
+        .getElementById("searchInput")
+        .addEventListener("input", applyFilters);
+      document
+        .getElementById("statusFilter")
+        .addEventListener("change", applyFilters);
+      document
+        .getElementById("emailFilter")
+        .addEventListener("input", applyFilters);
+      document
+        .getElementById("phoneFilter")
+        .addEventListener("input", applyFilters);
+
+      function applyFilters() {
+        const nameQuery = document
+          .getElementById("searchInput")
+          .value.toLowerCase();
+        const statusQuery = document.getElementById("statusFilter").value;
+        const emailQuery = document
+          .getElementById("emailFilter")
+          .value.toLowerCase();
+        const phoneQuery = document.getElementById("phoneFilter").value;
+
+        const filteredClients = clients.filter((client) => {
+          const matchesName = client.name.toLowerCase().includes(nameQuery);
+          const matchesStatus = !statusQuery || client.status === statusQuery;
+          const matchesEmail = client.email.toLowerCase().includes(emailQuery);
+          const matchesPhone = client.telephone.includes(phoneQuery);
+
+          return matchesName && matchesStatus && matchesEmail && matchesPhone;
+        });
+
+        renderClientList(filteredClients);
       }
 
       // Evento para a barra de pesquisa
