@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import { pool } from './src/config/database.js';
 import { authRoutes } from './src/routes/auth.js';
 import { userRoutes } from './src/routes/users.js';
+import { clientRoutes } from './src/routes/clients.js';
 
 dotenv.config();
 
@@ -56,6 +57,7 @@ app.get('/api/test-connection', async (req, res) => {
 // Routes
 app.use('/auth', authRoutes);
 app.use('/users', authMiddleware, userRoutes);
+app.use('/clients', authMiddleware, clientRoutes);
 
 app.get('/', (req, res) => {
   res.sendFile(join(__dirname, 'src/public', 'index.html'));
@@ -142,6 +144,10 @@ app.get('/clients', async (req, res) => {
     console.error('Erro ao listar clientes:', error);
     res.status(500).json({ error: error.message });
   }
+});
+
+app.get('/edit-client/:id', (req, res) => {
+  res.sendFile(join(__dirname, 'src/public/edit-client.html'));
 });
 
 // Rotas de autenticação
